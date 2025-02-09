@@ -17,7 +17,7 @@ function App() {
   console.log("📤 Sending booking:", { room, date, customer});
 
   try {
-    const response = await fetch("https://glammys-backend.onrender.com/api/book", {
+    const response = await fetch("http://localhost:5000/api/book", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ room, date, customer, clientPhone}),
