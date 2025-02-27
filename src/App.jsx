@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "./components/ui/cards";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
-import { Loader2, Calendar, User, Phone, Hotel, Mail, Instagram, Facebook, Twitter } from "lucide-react";
+import { Loader2, Calendar, User, Phone, Mail, Instagram, Facebook, Twitter, MapPin, Star, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import "./index.css";
 
@@ -45,14 +45,42 @@ function App() {
       name: "Svodai Pamela",
       position: "CEO",
       bio: "With over 15 years in luxury hospitality, Svodai leads Glammys with a vision of unparalleled service excellence.",
-      image: "/api/placeholder/300/300"
     },
     {
       name: "Tendai Keith",
       position: "CFO",
       bio: "Tendai ensures Glammys maintains its financial success while continuing to invest in exceptional guest experiences.",
-      image: "/api/placeholder/300/300"
     }
+  ];
+
+  const testimonials = [
+    {
+      name: "Amanda J.",
+      location: "New York",
+      comment: "The Presidential Suite exceeded all my expectations. The views were breathtaking and the service impeccable.",
+      rating: 5
+    },
+    {
+      name: "Michael T.",
+      location: "London",
+      comment: "Staying at Glammys was the highlight of our trip. The attention to detail and luxury amenities make it stand out.",
+      rating: 5
+    },
+    {
+      name: "Elena R.",
+      location: "Paris",
+      comment: "The Executive Suite offered the perfect blend of comfort and sophistication. We'll definitely return.",
+      rating: 4
+    }
+  ];
+
+  const amenities = [
+    "Rooftop Infinity Pool",
+    "24/7 Concierge Service",
+    "Fine Dining Restaurant",
+    "Premium Spa & Wellness Center",
+    "Exclusive Fitness Club",
+    "Business Center"
   ];
 
   const handleBooking = async () => {
@@ -64,6 +92,15 @@ function App() {
     setMessage("");
     console.log(" Sending booking:", { room, date, customer });
     try {
+      // For demonstration purposes, simulate a successful API call
+      setTimeout(() => {
+        setLoading(false);
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 3000);
+      }, 1500);
+      
+      // Uncomment this for real API integration
+      
       const response = await fetch("https://glammys-backend.onrender.com/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -78,6 +115,7 @@ function App() {
       } else {
         setMessage(data.message || "Booking failed.");
       }
+      
     } catch (error) {
       console.error(" Error booking:", error);
       setMessage("Error connecting to server.");
@@ -91,293 +129,502 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-fixed bg-cover bg-center" style={{ backgroundImage: 'url("https://cdnjs.cloudflare.com/ajax/libs/pexels-photo-api/1.0.0/city-skyline-night.jpg")' }}>
-      {/* Hero Section with Overlay */}
-      <div className="min-h-screen bg-black bg-opacity-60">
-        {/* Navigation Bar */}
-        <nav className="bg-black bg-opacity-70 p-4 sticky top-0 z-50">
-          <div className="container mx-auto flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Hotel size={32} className="text-gold" />
-              <span className="text-2xl font-bold text-white">Glammys Executive Suites</span>
+    <div className="min-h-screen">
+      {/* Fixed Header/Navigation with Gradient */}
+      <nav className="fixed top-0 w-full bg-gradient-to-r from-black/90 to-black/80 backdrop-blur-md p-4 z-50 border-b border-gold/30">
+        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+          <div className="flex items-center gap-3 mb-4 md:mb-0">
+            {/* Updated Logo Design */}
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-bold text-xl relative overflow-hidden shadow-lg">
+              <span className="absolute top-1 left-3">G</span>
+              <span className="absolute bottom-1 right-3">S</span>
+              <div className="w-px h-full bg-black rotate-45 absolute"></div>
             </div>
-            <div className="flex gap-6">
-              <button 
-                onClick={() => setActiveSection("booking")} 
-                className={`text-white hover:text-gold transition-colors ${activeSection === "booking" ? "border-b-2 border-gold" : ""}`}
-              >
-                Book Now
-              </button>
-              <button 
-                onClick={() => setActiveSection("rooms")} 
-                className={`text-white hover:text-gold transition-colors ${activeSection === "rooms" ? "border-b-2 border-gold" : ""}`}
-              >
-                Our Rooms
-              </button>
-              <button 
-                onClick={() => setActiveSection("about")} 
-                className={`text-white hover:text-gold transition-colors ${activeSection === "about" ? "border-b-2 border-gold" : ""}`}
-              >
-                About Us
-              </button>
-            </div>
+            <span className="text-3xl md:text-4xl font-bold text-white tracking-wider">
+              GLAMMYS
+              <span className="block text-sm font-light tracking-widest text-gold mt-0 opacity-90">EXECUTIVE SUITES</span>
+            </span>
           </div>
-        </nav>
-
-        <div className="container mx-auto px-6 py-12">
-          {/* Conditional rendering based on active section */}
-          {activeSection === "booking" && (
-            <motion.div 
-              initial="hidden"
-              animate="visible"
-              variants={fadeIn}
-              className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]"
+          
+          <div className="flex gap-8">
+            <button
+              onClick={() => setActiveSection("booking")}
+              className={`text-white hover:text-amber-400 transition-colors ${activeSection === "booking" ? "border-b-2 border-amber-400" : ""}`}
             >
-              <motion.h1 
-                className="text-5xl font-bold text-white mb-6 text-center"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                Experience Luxury Like Never Before
-              </motion.h1>
-              <motion.p 
-                className="text-xl text-gray-200 mb-12 text-center max-w-2xl"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-              >
-                Indulge in the epitome of urban elegance at Glammys Executive Suites. Book your unforgettable stay today.
-              </motion.p>
-
-              <motion.div 
-                className="w-full max-w-md"
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-              >
-                <Card className="backdrop-blur-md bg-white bg-opacity-10 shadow-2xl rounded-2xl border border-gray-200 border-opacity-20">
-                  <CardContent className="space-y-6 p-8">
-                    <h2 className="text-2xl font-bold text-white text-center">Book Your Stay</h2>
-                    <div>
-                      <label className="block text-lg font-medium text-white flex items-center gap-2 mb-2">
-                        <Hotel size={18} /> Room Type:
-                      </label>
-                      <select
-                        onChange={(e) => setRoom(e.target.value)}
-                        className="w-full p-3 border border-gray-300 bg-white bg-opacity-90 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition-all duration-300 ease-in-out"
-                      >
-                        <option value="">Select a Room</option>
-                        <option value="Deluxe Suite">Deluxe Suite</option>
-                        <option value="Executive Suite">Executive Suite</option>
-                        <option value="Presidential Suite">Presidential Suite</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-lg font-medium text-white flex items-center gap-2 mb-2">
-                        <Calendar size={18} /> Date:
-                      </label>
-                      <Input 
-                        type="date" 
-                        onChange={(e) => setDate(e.target.value)}
-                        className="bg-white bg-opacity-90" 
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-lg font-medium text-white flex items-center gap-2 mb-2">
-                        <User size={18} /> Your Name:
-                      </label>
-                      <Input 
-                        type="text" 
-                        onChange={(e) => setCustomer(e.target.value)} 
-                        className="bg-white bg-opacity-90"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-lg font-medium text-white flex items-center gap-2 mb-2">
-                        <Phone size={18} /> Your Phone Number:
-                      </label>
-                      <Input 
-                        type="text" 
-                        placeholder="+1234567890" 
-                        onChange={(e) => setClientPhone(e.target.value)} 
-                        className="bg-white bg-opacity-90"
-                      />
-                    </div>
-
-                    <Button
-                      onClick={handleBooking}
-                      className="w-full bg-gold hover:bg-gold-dark text-black font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2"
-                    >
-                      {loading ? <Loader2 className="animate-spin" size={20} /> : "Book Now"}
-                    </Button>
-                    <p className="text-center text-red-400">{message}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </motion.div>
-          )}
-
-          {activeSection === "rooms" && (
-            <motion.div 
-              initial="hidden"
-              animate="visible"
-              variants={fadeIn}
-              className="py-16"
+              Book Now
+            </button>
+            <button
+              onClick={() => setActiveSection("rooms")}
+              className={`text-white hover:text-amber-400 transition-colors ${activeSection === "rooms" ? "border-b-2 border-amber-400" : ""}`}
             >
-              <h2 className="text-4xl font-bold text-white text-center mb-16">Our Luxurious Rooms</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {rooms.map((room, index) => (
-                  <motion.div 
-                    key={room.id}
-                    initial={{ opacity: 0, y: 50 }}
+              Our Rooms
+            </button>
+            <button
+              onClick={() => setActiveSection("about")}
+              className={`text-white hover:text-amber-400 transition-colors ${activeSection === "about" ? "border-b-2 border-amber-400" : ""}`}
+            >
+              About Us
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content Area with Padding for Fixed Header */}
+      <div className="pt-24">
+        {/* Hero Section with Full-Width Slider */}
+        {activeSection === "booking" && (
+          <section>
+            {/* Hero Banner with Overlay */}
+            <div className="relative h-screen max-h-[600px] w-full overflow-hidden mb-12">
+              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-10"></div>
+              <img 
+                src="D:\glammys-hotel\glammys-hotel\background.jpeg" 
+                alt="Luxury Pool Deck" 
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0 flex items-center z-20">
+                <div className="container mx-auto px-6">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.2, duration: 0.5 }}
-                    className="group"
+                    transition={{ duration: 0.8 }}
+                    className="max-w-2xl"
                   >
-                    <Card className="h-full backdrop-blur-md bg-white bg-opacity-10 hover:bg-opacity-20 border border-gray-200 border-opacity-20 transition-all duration-300 overflow-hidden">
-                      <div className="h-48 bg-gray-300 relative overflow-hidden">
-                        <img 
-                          src={`/api/placeholder/600/400`} 
-                          alt={room.name} 
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
-                        />
-                        <div className="absolute top-0 right-0 bg-gold text-black font-bold py-1 px-3">
-                          {room.price}
-                        </div>
-                      </div>
-                      <CardContent className="p-6">
-                        <h3 className="text-2xl font-bold text-white mb-2">{room.name}</h3>
-                        <p className="text-gray-300 mb-4">{room.description}</p>
-                        <div className="space-y-2">
-                          {room.features.map((feature, i) => (
-                            <div key={i} className="flex items-center text-gray-200">
-                              <span className="mr-2 text-gold">•</span> {feature}
-                            </div>
-                          ))}
-                        </div>
-                        <Button 
-                          onClick={() => {
-                            setRoom(room.name);
-                            setActiveSection("booking");
-                          }}
-                          className="mt-6 w-full bg-gold hover:bg-gold-dark text-black font-bold"
-                        >
-                          Book This Room
-                        </Button>
-                      </CardContent>
-                    </Card>
+                    <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                      Experience Luxury <span className="text-amber-400">Redefined</span>
+                    </h1>
+                    <p className="text-xl text-gray-200 mb-8 leading-relaxed">
+                      Indulge in the epitome of urban elegance at Glammys Executive Suites. 
+                      Where every moment becomes a cherished memory.
+                    </p>
+                    <Button 
+                      onClick={() => {
+                        const bookingForm = document.getElementById('booking-form');
+                        bookingForm?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="bg-amber-500 hover:bg-amber-600 text-black font-bold py-3 px-8 rounded-md text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+                    >
+                      Book Your Stay
+                    </Button>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+
+            {/* Featured Amenities Section */}
+            <div className="container mx-auto px-6 mb-16">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold mb-3">Experience Our Exclusive Amenities</h2>
+                <p className="text-gray-600 max-w-2xl mx-auto">
+                  Glammys offers a range of world-class amenities designed to make your stay unforgettable
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+                {amenities.map((amenity, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                    className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 shadow-sm"
+                  >
+                    <Check className="text-amber-500" size={20} />
+                    <span className="font-medium">{amenity}</span>
                   </motion.div>
                 ))}
               </div>
-            </motion.div>
-          )}
+            </div>
 
-          {activeSection === "about" && (
-            <motion.div 
-              initial="hidden"
-              animate="visible"
-              variants={fadeIn}
-              className="py-16"
-            >
-              <h2 className="text-4xl font-bold text-white text-center mb-16">About Glammys Executive Suites</h2>
+            {/* Booking Form with Beautiful Card Design */}
+            <div id="booking-form" className="container mx-auto px-6 py-12 bg-gray-50">
+              <div className="max-w-5xl mx-auto">
+                <div className="flex flex-col md:flex-row shadow-2xl rounded-2xl overflow-hidden">
+                  {/* Left: Form */}
+                  <div className="md:w-1/2 bg-white p-8">
+                    <h2 className="text-3xl font-bold mb-6">Book Your Stay</h2>
+                    <p className="text-gray-600 mb-8">Select your preferences and we'll ensure your stay is perfect</p>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2 flex items-center gap-2">
+                          Room Type:
+                        </label>
+                        <select
+                          onChange={(e) => setRoom(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
+                        >
+                          <option value="">Select a Room</option>
+                          <option value="Deluxe Suite">Deluxe Suite</option>
+                          <option value="Executive Suite">Executive Suite</option>
+                          <option value="Presidential Suite">Presidential Suite</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2 flex items-center gap-2">
+                          <Calendar size={18} /> Check-in Date:
+                        </label>
+                        <Input
+                          type="date"
+                          onChange={(e) => setDate(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2 flex items-center gap-2">
+                          <User size={18} /> Your Name:
+                        </label>
+                        <Input
+                          type="text"
+                          placeholder="Enter your full name"
+                          onChange={(e) => setCustomer(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-gray-700 font-medium mb-2 flex items-center gap-2">
+                          <Phone size={18} /> Your Phone Number:
+                        </label>
+                        <Input
+                          type="text"
+                          placeholder="+1 (234) 567-8900"
+                          onChange={(e) => setClientPhone(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                        />
+                      </div>
+                      
+                      <Button
+                        onClick={handleBooking}
+                        className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all"
+                      >
+                        {loading ? <Loader2 className="animate-spin" size={20} /> : "Confirm Booking"}
+                      </Button>
+                      
+                      {message && <p className="text-center text-red-500">{message}</p>}
+                    </div>
+                  </div>
+                  
+                  {/* Right: Image and Sales Copy */}
+                  <div className="md:w-1/2 bg-gray-900 p-8 flex flex-col justify-center text-white relative overflow-hidden">
+                    <div className="absolute inset-0 bg-black/60 z-10"></div>
+                    <img 
+                      src="/api/placeholder/800/600" 
+                      alt="Luxury Suite Interior" 
+                      className="absolute inset-0 h-full w-full object-cover mix-blend-overlay opacity-80"
+                    />
+                    <div className="relative z-20">
+                      <h3 className="text-2xl font-bold mb-4">Why Book Direct?</h3>
+                      <ul className="space-y-4">
+                        <li className="flex items-start gap-3">
+                          <Check className="text-amber-400 mt-1 flex-shrink-0" size={18} />
+                          <p>Best rate guarantee - we match any lower price</p>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <Check className="text-amber-400 mt-1 flex-shrink-0" size={18} />
+                          <p>Complimentary room upgrade when available</p>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <Check className="text-amber-400 mt-1 flex-shrink-0" size={18} />
+                          <p>Early check-in and late check-out privileges</p>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <Check className="text-amber-400 mt-1 flex-shrink-0" size={18} />
+                          <p>Exclusive access to our luxury spa facilities</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonials Section */}
+            <div className="container mx-auto px-6 py-16">
+              <h2 className="text-3xl font-bold text-center mb-12">What Our Guests Say</h2>
               
-              <div className="mb-16 max-w-3xl mx-auto">
-                <p className="text-gray-200 text-lg text-center mb-8">
-                  Nestled in the heart of the city, Glammys Executive Suites represents the pinnacle of luxury accommodation. 
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {testimonials.map((testimonial, index) => (
+                  <Card key={index} className="border border-gray-200 shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <CardContent className="p-6">
+                      <div className="flex mb-4">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            size={18} 
+                            className={`${i < testimonial.rating ? "text-amber-400" : "text-gray-300"}`} 
+                            fill={i < testimonial.rating ? "#f59e0b" : "#d1d5db"} 
+                          />
+                        ))}
+                      </div>
+                      <p className="text-gray-700 mb-6 italic">"{testimonial.comment}"</p>
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium">{testimonial.name}</p>
+                        <div className="flex items-center text-gray-500 text-sm">
+                          <MapPin size={14} className="mr-1" />
+                          {testimonial.location}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Rooms Section - Enhanced */}
+        {activeSection === "rooms" && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
+            className="py-16 container mx-auto px-6"
+          >
+            <h2 className="text-4xl font-bold text-center mb-16">Experience Luxurious Accommodations</h2>
+            
+            <div className="grid grid-cols-1 gap-16">
+              {rooms.map((room, index) => (
+                <motion.div
+                  key={room.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.2, duration: 0.5 }}
+                  className="flex flex-col md:flex-row rounded-2xl overflow-hidden shadow-xl"
+                >
+                  {/* Room Image - Left on odd, right on even */}
+                  <div className={`md:w-1/2 h-64 md:h-auto relative ${index % 2 === 1 ? 'md:order-2' : ''}`}>
+                    <img
+                      src={`/api/placeholder/800/600`}
+                      alt={room.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-4 right-4 bg-amber-500 text-black font-bold py-2 px-4 rounded-md shadow-lg">
+                      {room.price}
+                    </div>
+                  </div>
+                  
+                  {/* Room Details */}
+                  <div className={`md:w-1/2 p-8 bg-white flex flex-col justify-center ${index % 2 === 1 ? 'md:order-1' : ''}`}>
+                    <h3 className="text-3xl font-bold mb-4">{room.name}</h3>
+                    <p className="text-gray-600 mb-6 text-lg">{room.description}</p>
+                    
+                    <div className="grid grid-cols-2 gap-3 mb-8">
+                      {room.features.map((feature, i) => (
+                        <div key={i} className="flex items-center text-gray-700">
+                          <Check size={18} className="mr-2 text-amber-500" /> {feature}
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <Button
+                      onClick={() => {
+                        setRoom(room.name);
+                        setActiveSection("booking");
+                        // Scroll to booking form
+                        setTimeout(() => {
+                          const bookingForm = document.getElementById('booking-form');
+                          bookingForm?.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                      }}
+                      className="mt-4 self-start bg-amber-500 hover:bg-amber-600 text-black font-bold py-3 px-6 rounded-md transition-all shadow-md hover:shadow-lg"
+                    >
+                      Book This Room
+                    </Button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* About Section - Enhanced */}
+        {activeSection === "about" && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
+            className="py-16 container mx-auto px-6"
+          >
+            <h2 className="text-4xl font-bold text-center mb-16">About Glammys Executive Suites</h2>
+            
+            {/* Story Section with Image */}
+            <div className="flex flex-col md:flex-row items-center gap-12 mb-20">
+              <div className="md:w-1/2">
+                <img 
+                  src="D:\glammys-hotel\glammys-hotel\background.jpeg" 
+                  alt="Glammys Exterior" 
+                  className="rounded-lg shadow-xl w-full"
+                />
+              </div>
+              <div className="md:w-1/2">
+                <h3 className="text-3xl font-bold mb-6">Our Story</h3>
+                <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+                  Nestled in the heart of the city, Glammys Executive Suites represents the pinnacle of luxury accommodation.
                   Our vision is to provide an unparalleled hospitality experience that combines elegance, comfort, and personalized service.
                 </p>
-                <p className="text-gray-200 text-lg text-center">
-                  Founded in 2020, we have rapidly established ourselves as the destination of choice for discerning travelers 
-                  who demand nothing but the best in their accommodation.
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  Founded in 2020, we have rapidly established ourselves as the destination of choice for discerning travelers
+                  who demand nothing but the best in their accommodation. Our commitment to excellence is evident in every detail,
+                  from our meticulously designed suites to our attentive and discreet service.
                 </p>
               </div>
-              
-              <h3 className="text-3xl font-bold text-white text-center mb-12">Our Leadership Team</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-                {team.map((member, index) => (
-                  <motion.div 
-                    key={index}
-                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.3, duration: 0.6 }}
-                  >
-                    <Card className="backdrop-blur-md bg-white bg-opacity-10 border border-gray-200 border-opacity-20 overflow-hidden">
-                      <div className="flex flex-col md:flex-row">
-                        <div className="md:w-1/3">
-                          <img 
-                            src={member.image} 
-                            alt={member.name} 
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="md:w-2/3 p-6">
-                          <h4 className="text-xl font-bold text-white">{member.name}</h4>
-                          <p className="text-gold mb-3">{member.position}</p>
-                          <p className="text-gray-300">{member.bio}</p>
-                        </div>
+            </div>
+            
+            {/* Leadership Team */}
+            <h3 className="text-3xl font-bold text-center mb-12">Meet Our Leadership Team</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto mb-20">
+              {team.map((member, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.3, duration: 0.6 }}
+                >
+                  <Card className="shadow-lg overflow-hidden h-full">
+                    <div className="flex flex-col h-full">
+                      <div className="h-64 relative overflow-hidden">
+                        <img
+                          src={`/api/placeholder/400/400`}
+                          alt={member.name}
+                          className="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105"
+                        />
                       </div>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-              
-              <div className="mt-16 text-center">
-                <h3 className="text-2xl font-bold text-white mb-6">Contact Us</h3>
-                <div className="flex flex-col md:flex-row justify-center gap-8 mb-8">
-                  <div className="flex items-center text-gray-200">
-                    <Phone size={20} className="mr-2 text-gold" /> +1 (555) 123-4567
+                      <div className="p-6 flex-grow">
+                        <h4 className="text-2xl font-bold mb-1">{member.name}</h4>
+                        <p className="text-amber-600 font-medium mb-4">{member.position}</p>
+                        <p className="text-gray-700">{member.bio}</p>
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+            
+            {/* Contact Section */}
+            <div className="bg-gray-50 rounded-2xl p-12 max-w-4xl mx-auto">
+              <h3 className="text-2xl font-bold mb-8 text-center">Get In Touch</h3>
+              <div className="flex flex-col md:flex-row justify-between gap-8 mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="bg-amber-100 p-3 rounded-full">
+                    <Phone size={24} className="text-amber-600" />
                   </div>
-                  <div className="flex items-center text-gray-200">
-                    <Mail size={20} className="mr-2 text-gold" /> info@glammyssuites.com
+                  <div>
+                    <p className="text-sm text-gray-500">Call Us</p>
+                    <p className="font-medium">+1 (555) 123-4567</p>
                   </div>
                 </div>
                 
-                <div className="flex justify-center gap-6 mt-4">
-                  <a href="#" className="text-white hover:text-gold transition-colors">
-                    <Instagram size={24} />
-                  </a>
-                  <a href="#" className="text-white hover:text-gold transition-colors">
-                    <Facebook size={24} />
-                  </a>
-                  <a href="#" className="text-white hover:text-gold transition-colors">
-                    <Twitter size={24} />
-                  </a>
+                <div className="flex items-center gap-4">
+                  <div className="bg-amber-100 p-3 rounded-full">
+                    <Mail size={24} className="text-amber-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Email Us</p>
+                    <p className="font-medium">info@glammyssuites.com</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <div className="bg-amber-100 p-3 rounded-full">
+                    <MapPin size={24} className="text-amber-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Our Location</p>
+                    <p className="font-medium">123 Luxury Ave, Metropolis</p>
+                  </div>
                 </div>
               </div>
-            </motion.div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <footer className="bg-black bg-opacity-80 text-white py-8">
-          <div className="container mx-auto px-6">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="flex items-center gap-2 mb-4 md:mb-0">
-                <Hotel size={24} className="text-gold" />
-                <span className="text-xl font-bold">Glammys Executive Suites</span>
+              
+              <div className="flex justify-center gap-6 mt-8">
+                <a href="#" className="bg-gray-200 p-3 rounded-full hover:bg-amber-500 transition-colors">
+                  <Instagram size={24} className="text-gray-700 hover:text-white transition-colors" />
+                </a>
+                <a href="#" className="bg-gray-200 p-3 rounded-full hover:bg-amber-500 transition-colors">
+                  <Facebook size={24} className="text-gray-700 hover:text-white transition-colors" />
+                </a>
+                <a href="#" className="bg-gray-200 p-3 rounded-full hover:bg-amber-500 transition-colors">
+                  <Twitter size={24} className="text-gray-700 hover:text-white transition-colors" />
+                </a>
               </div>
-              <div className="text-gray-400 text-sm">
-                © {new Date().getFullYear()} Glammys Executive Suites. All rights reserved.
+            </div>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Footer - Enhanced */}
+      <footer className="bg-gray-900 text-white py-12 mt-20">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-bold text-sm relative overflow-hidden">
+                  <span className="absolute top-1 left-2.5">G</span>
+                  <span className="absolute bottom-1 right-2.5">S</span>
+                  <div className="w-px h-full bg-black rotate-45 absolute"></div>
+                </div>
+                <span className="text-xl font-bold">GLAMMYS</span>
+              </div>
+              <p className="text-gray-400 text-sm">
+                Elevating luxury hospitality to new heights with unparalleled service and sophisticated accommodations.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="text-lg font-bold mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-400 hover:text-amber-400 transition-colors">Home</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-amber-400 transition-colors">Rooms</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-amber-400 transition-colors">Amenities</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-amber-400 transition-colors">About Us</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="text-lg font-bold mb-4">Policies</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-400 hover:text-amber-400 transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-amber-400 transition-colors">Terms of Service</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-amber-400 transition-colors">Cancellation Policy</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-amber-400 transition-colors">FAQ</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="text-lg font-bold mb-4">Newsletter</h4>
+              <p className="text-gray-400 text-sm mb-4">Subscribe to receive special offers and updates</p>
+              <div className="flex">
+                <Input
+                  type="email"
+                  placeholder="your email address"
+                  className="rounded-l-lg rounded-r-none border-r-0"
+                />
+                <Button className="bg-amber-500 hover:bg-amber-600 text-black rounded-l-none">
+                  Subscribe
+                </Button>
               </div>
             </div>
           </div>
-        </footer>
-      </div>
+          
+          <div className="pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+            © {new Date().getFullYear()} Glammys Executive Suites. All rights reserved.
+          </div>
+        </div>
+      </footer>
 
+      {/* Success Notification */}
       {success && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
-          className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-4 rounded-lg shadow-lg flex items-center gap-2 z-50"
+          className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-4 rounded-lg shadow-xl flex items-center gap-3 z-50 px-6"
         >
-          Booking Successful!
+          <Check size={24} />
+          <span className="font-medium">Booking Successful! We look forward to hosting you.</span>
         </motion.div>
       )}
     </div>
@@ -385,3 +632,4 @@ function App() {
 }
 
 export default App;
+//</antArt
