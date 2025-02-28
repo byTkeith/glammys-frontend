@@ -5,36 +5,62 @@
 @tailwind utilities;
 
 :root {
-  --color-gold: #D4AF37;
-  --color-gold-dark: #B8860B;
+  --color-gold: #FFD700; /* Gold */
+  --color-gold-dark: #D4AF37; /* Soft Gold */
+  --color-black: #000000; /* Black */
+  --color-dark-gray: #333333; /* Dark Gray */
+  --color-white: #FFFFFF; /* White */
+  --color-light-gray: #F0F0F0; /* Light Gray */
 }
 
 body {
   margin: 0;
+  background-color: var(--color-black); /* Black background */
+  color: var(--color-white); /* White text */
   font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  background-color: var(--color-dark-gray); /* Dark Gray header */
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 h1, h2, h3, h4 {
   font-family: 'Playfair Display', serif;
+  color: var(--color-white); /* White text for headings */
 }
 
 /* Custom utility classes */
 .text-gold {
-  color: var(--color-gold);
+  color: var(--color-gold); /* Gold text */
 }
 
 .bg-gold {
-  background-color: var(--color-gold);
+  background-color: var(--color-gold); /* Gold background */
 }
 
 .hover\:bg-gold-dark:hover {
-  background-color: var(--color-gold-dark);
+  background-color: var(--color-gold-dark); /* Soft Gold on hover */
 }
 
 .focus\:ring-gold:focus {
-  --ring-color: var(--color-gold);
+  --ring-color: var(--color-gold); /* Gold focus ring */
 }
 
 /* Animations */
@@ -63,14 +89,14 @@ h1, h2, h3, h4 {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1); /* Light track for contrast */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gold);
+  background: var(--color-gold); /* Gold scrollbar thumb */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold-dark);
+  background: var(--color-gold-dark); /* Soft Gold on hover */
 }
