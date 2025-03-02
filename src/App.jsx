@@ -283,8 +283,8 @@ function App() {
                         <Star
                           key={i}
                           size={18}
-                          className={`${i < testimonial.rating ? "text-amber-400" : "text-gray-500"}`}
-                          fill={i < testimonial.rating ? "#f59e0b" : "#6b7280"}
+                          className={`${i < testimonial.rating ? "text-[#d4af37]" : "text-gray-500"}`}
+                          fill={i < testimonial.rating ? "#d4af37" : "#6b7280"}
                         />
                       ))}
                     </div>
@@ -321,19 +321,19 @@ function App() {
                       alt={room.name}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-4 right-4 bg-amber-500 text-black font-bold py-2 px-4 rounded-md shadow-lg">
+                    <div className="absolute top-4 right-4 bg-[#d4af37] text-black font-bold py-2 px-4 rounded-md shadow-lg">
                       {room.price}
                     </div>
                   </div>
 
                   {/* Room Details */}
                   <div className={`md:w-1/2 p-8 bg-gray-800 flex flex-col justify-center ${index % 2 === 1 ? 'md:order-1' : ''}`}>
-                    <h3 className="text-3xl font-bold mb-4 text-amber-400">{room.name}</h3>
+                    <h3 className="text-3xl font-bold mb-4 text-[#d4af37]">{room.name}</h3>
                     <p className="text-gray-400 mb-6 text-lg">{room.description}</p>
                     <div className="grid grid-cols-2 gap-3 mb-8">
                       {room.features.map((feature, i) => (
                         <div key={i} className="flex items-center text-gray-400">
-                          <Check size={18} className="mr-2 text-amber-500" /> {feature}
+                          <Check size={18} className="mr-2 text-[#d4af37]" /> {feature}
                         </div>
                       ))}
                     </div>
@@ -346,7 +346,7 @@ function App() {
                           bookingForm?.scrollIntoView({ behavior: 'smooth' });
                         }, 100);
                       }}
-                      className="mt-4 self-start bg-amber-500 hover:bg-amber-600 text-black font-bold py-3 px-6 rounded-md transition-all shadow-md hover:shadow-lg"
+                      className="mt-4 self-start bg-[#d4af37] hover:bg-[#c0a035] text-black font-bold py-3 px-6 rounded-md transition-all shadow-md hover:shadow-lg"
                     >
                       Book This Room
                     </Button>
