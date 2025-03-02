@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Header from "./Header";
+import {Header} from "./components/ui/Header";
 import { Card, CardContent } from "./components/ui/cards"; // Changed from "cards" to "card"
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
@@ -112,65 +112,10 @@ function App() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Fixed Header/Navigation */}
-      <nav className="fixed top-0 w-full bg-gray-900 p-4 z-50 border-b border-amber-500/30">
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-           {/* Buttons on the left */}
-           <div className="flex gap-8">
-          <button
-            onClick={() => setActiveSection("booking")}
-            className={`text-white hover:text-amber-400 transition-colors ${activeSection === "booking" ? "border-b-2 border-amber-400" : ""}`}
-          >
-            Book Now
-          </button>
-          <button
-            onClick={() => setActiveSection("rooms")}
-            className={`text-white hover:text-amber-400 transition-colors ${activeSection === "rooms" ? "border-b-2 border-amber-400" : ""}`}
-          >
-            Our Rooms
-          </button>
-          <button
-            onClick={() => setActiveSection("about")}
-            className={`text-white hover:text-amber-400 transition-colors ${activeSection === "about" ? "border-b-2 border-amber-400" : ""}`}
-          >
-            About Us
-          </button>
-        </div>
-        {/* Logo moved to the right */}
-          <div className="flex items-center gap-3 mb-4 md:mb-0 ml-auto">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-bold text-xl relative overflow-hidden shadow-lg">
-              <span className="absolute top-1 left-3">G</span>
-              <span className="absolute bottom-1 right-3">S</span>
-              <div className="w-px h-full bg-black rotate-45 absolute"></div>
-            </div>
-            <span className="text-3xl md:text-5xl font-bold text-white tracking-wider">
-              GLAMMYS
-              <span className="block text-sm md:text-base font-light tracking-widest text-amber-400 mt-0 opacity-90">EXECUTIVE SUITES</span>
-            </span>
-          </div>
-          <div className="flex gap-8">
-            <button
-              onClick={() => setActiveSection("booking")}
-              className={`text-white hover:text-amber-400 transition-colors ${activeSection === "booking" ? "border-b-2 border-amber-400" : ""}`}
-            >
-              Book Now
-            </button>
-            <button
-              onClick={() => setActiveSection("rooms")}
-              className={`text-white hover:text-amber-400 transition-colors ${activeSection === "rooms" ? "border-b-2 border-amber-400" : ""}`}
-            >
-              Our Rooms
-            </button>
-            <button
-              onClick={() => setActiveSection("about")}
-              className={`text-white hover:text-amber-400 transition-colors ${activeSection === "about" ? "border-b-2 border-amber-400" : ""}`}
-            >
-              About Us
-            </button>
-          </div>
-        </div>
-      </nav>
+      {/* Render the Header component with props */}
+      <Header activeSection={activeSection} setActiveSection={setActiveSection} />
 
+     
       {/* Main Content Area */}
       <div className="pt-24">
         {activeSection === "booking" && (
