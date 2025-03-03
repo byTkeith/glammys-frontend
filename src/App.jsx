@@ -1,6 +1,6 @@
-import { useState } from "react";
-import {Header} from "./components/ui/Header";
-import { Card, CardContent } from "./components/ui/cards"; // Changed from "cards" to "card"
+import { useState, useEffect } from "react";
+import { Header } from "./components/ui/Header";
+import { Card, CardContent } from "./components/ui/cards";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Loader2, Calendar, User, Phone, Mail, Instagram, Facebook, Twitter, MapPin, Star, Check } from "lucide-react";
@@ -16,43 +16,63 @@ function App() {
   const [success, setSuccess] = useState(false);
   const [activeSection, setActiveSection] = useState("booking");
 
+  // State for hero slideshow
+  const [heroImageIndex, setHeroImageIndex] = useState(0);
+  const heroImages = [
+    "/images/garden-view.jpeg",
+    "/images/city-view.jpeg",
+    "/images/pool-view.jpeg"
+  ];
+
+  // State for room slideshows
+  const [roomImageIndices, setRoomImageIndices] = useState({});
+
   const rooms = [
     {
       id: 1,
       name: "Deluxe Suite",
-      price: "$150/night",
+      price: "ZAR1500 p/night",
       description: "Spacious suite with city view, king-size bed, and premium amenities.",
-      features: ["King-size bed", "City view", "Free Wi-Fi", "Mini bar"]
+      features: ["King-size bed", "City view", "Free Wi-Fi", "Full Fridge"],
+      images: [
+        "/images/bedroom-1.jpeg",
+        "/images/dining-pov.jpeg",
+        "/images/kicthenet.jpeg"
+      ]
     },
     {
       id: 2,
       name: "Executive Suite",
-      price: "$250/night",
-      description: "Luxury suite with separate living area, workspace and panoramic views.",
-      features: ["King-size bed", "Separate living area", "Work desk", "Premium toiletries"]
+      price: "ZAR1350 p/night",
+      description: "Luxury suite with separate living area, workspace, and panoramic views.",
+      features: ["King-size bed", "Separate living area", "Work desk", "Premium toiletries"],
+      images: [
+        "/images/bedroom-2.jpeg",
+        "/images/lounge-view.jpeg",
+  
+      ]
     },
     {
       id: 3,
-      name: "Presidential Suite",
-      price: "$500/night",
+      name: "Family Suite",
+      price: "ZAR1350 p/night",
       description: "Our most luxurious accommodation with butler service and private terrace.",
-      features: ["Master bedroom", "Private terrace", "Butler service", "Jacuzzi"]
+      features: ["Master bedroom", "Private terrace", "Queen Sized Bed", "pool"],
+      images: [
+        "/images/bedroom-1.jpeg",
+        "/images/dining-pov.jpeg",
+        "/images/lounge-view.jpeg"
+      ]
     }
   ];
 
   const team = [
     {
-      name: "Svodai Pamela",
+      name: "Ms S. Nyevedzanał",
       position: "Director",
       bio: "With over 15 years in luxury hospitality, Svodai leads Glammys with a vision of unparalleled service excellence.",
-      image: "/images/ceo-2.jpeg",
-    },
-    // {
-    //   name: "Tendai Keith",
-    //   position: "CFO",
-    //   bio: "Tendai ensures Glammys maintains its financial success while continuing to invest in exceptional guest experiences.",
-    //   image: "/images/team-2.jpeg",
-    // }
+      image: "/images/ceo-2.jpeg"
+    }
   ];
 
   const testimonials = [
@@ -77,13 +97,42 @@ function App() {
   ];
 
   const amenities = [
-    "Rooftop Infinity Pool",
+    "Daily House Cleaning",
     "24/7 Concierge Service",
-    "Fine Dining Restaurant",
-    "Premium Spa & Wellness Center",
-    "Exclusive Fitness Club",
-    "Business Center"
+    "CCTV Security",
+    "A Walk From Nelson Mandela Square",
+    "Exclusive Fitness Centre",
+    "Heated Pool"
   ];
+
+  // Hero slideshow effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeroImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Room slideshow effect
+  useEffect(() => {
+    const intervals = {};
+
+    rooms.forEach((room) => {
+      intervals[room.name] = setInterval(() => {
+        setRoomImageIndices((prevIndices) => ({
+          ...prevIndices,
+          [room.name]: (prevIndices[room.name] + 1) % room.images.length
+        }));
+      }, 5000); // Change image every 5 seconds
+    });
+
+    return () => {
+      Object.keys(intervals).forEach((roomName) => {
+        clearInterval(intervals[roomName]);
+      });
+    };
+  }, []);
 
   const handleBooking = async () => {
     if (!room || !date || !customer || !clientPhone) {
@@ -115,15 +164,19 @@ function App() {
       {/* Render the Header component with props */}
       <Header activeSection={activeSection} setActiveSection={setActiveSection} />
 
-     
       {/* Main Content Area */}
       <div className="pt-24">
+        {/* Hero Section */}
         {activeSection === "booking" && (
           <section>
             {/* Hero Banner */}
             <div className="relative h-screen max-h-[600px] w-full overflow-hidden mb-12">
               <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 z-10"></div>
-              <img src="/images/garden-view.jpeg" alt="Luxury Hotel Ambiance" className="w-full h-full object-cover object-center" />
+              <img
+                src={heroImages[heroImageIndex]}
+                alt="Luxury Hotel Ambiance"
+                className="w-full h-full object-cover object-center"
+              />
               <div className="absolute inset-0 flex items-center z-20">
                 <div className="container mx-auto px-6">
                   <div className={`max-w-2xl ${fadeClasses}`}>
@@ -206,7 +259,7 @@ function App() {
                         <label className="block text-gray-400 font-medium mb-2 flex items-center gap-2">
                           <User size={18} /> Your Name:
                         </label>
-                        <Input
+                        <input
                           type="text"
                           placeholder="Enter your full name"
                           onChange={(e) => setCustomer(e.target.value)}
@@ -217,7 +270,7 @@ function App() {
                         <label className="block text-gray-400 font-medium mb-2 flex items-center gap-2">
                           <Phone size={18} /> Your Phone Number:
                         </label>
-                        <Input
+                        <input
                           type="text"
                           placeholder="+1 (234) 567-8900"
                           onChange={(e) => setClientPhone(e.target.value)}
@@ -317,7 +370,7 @@ function App() {
                   {/* Room Image */}
                   <div className={`md:w-1/2 h-64 md:h-auto relative ${index % 2 === 1 ? 'md:order-2' : ''}`}>
                     <img
-                      src="/images/bedroom-2-view.jpeg"
+                      src={room.images[roomImageIndices[room.name] || 0]}
                       alt={room.name}
                       className="w-full h-full object-cover"
                     />
@@ -325,7 +378,6 @@ function App() {
                       {room.price}
                     </div>
                   </div>
-
                   {/* Room Details */}
                   <div className={`md:w-1/2 p-8 bg-gray-800 flex flex-col justify-center ${index % 2 === 1 ? 'md:order-1' : ''}`}>
                     <h3 className="text-3xl font-bold mb-4 text-[#d4af37]">{room.name}</h3>
@@ -348,7 +400,7 @@ function App() {
                       }}
                       className="mt-4 self-start bg-[#d4af37] hover:bg-[#c0a035] text-black font-bold py-3 px-6 rounded-md transition-all shadow-md hover:shadow-lg"
                     >
-                      Book This Room
+                      Book Now
                     </Button>
                   </div>
                 </div>
@@ -361,7 +413,6 @@ function App() {
         {activeSection === "about" && (
           <div className={`py-16 container mx-auto px-6 bg-black ${fadeClasses}`}>
             <h2 className="text-4xl font-bold text-center mb-16 text-amber-400">About Glammys Executive Suites</h2>
-
             {/* Story Section */}
             <div className="flex flex-col md:flex-row items-center gap-12 mb-20">
               <div className="md:w-1/2">
@@ -374,8 +425,8 @@ function App() {
               <div className="md:w-1/2">
                 <h3 className="text-3xl font-bold mb-6 text-amber-400">Our Story</h3>
                 <p className="text-lg text-gray-400 mb-6 leading-relaxed">
-                  Nestled in the heart of the city, Glammys Executive Suites represents the pinnacle of luxury accommodation.
-                  Our vision is to provide an unparalleled hospitality experience that combines elegance, comfort, and personalized service.
+                  Nestled in the heart Sandton, Glammys Executive Suites represents the pinnacle of luxury accommodation.
+                  Our vision is to provide an unparalleled hospitality experience that combines affordability, comfort, and personalized service.
                 </p>
                 <p className="text-lg text-gray-400 leading-relaxed">
                   Founded in 2020, we have rapidly established ourselves as the destination of choice for discerning travelers in Sandton, Johannesburg
@@ -401,7 +452,6 @@ function App() {
                           src={member.image}
                           alt={member.name}
                           style={{ width: '300px', height: '400px', objectFit: 'cover' }}
-                          //className="w-full h-full object-cover object-center"
                         />
                       </div>
                       <div className="p-6 flex-grow bg-gray-800">
@@ -443,7 +493,7 @@ function App() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Our Location</p>
-                    <p className="font-medium">123 Luxury Ave, Metropolis</p>
+                    <p className="font-medium">86 Grayston Drive Sandton</p>
                   </div>
                 </div>
               </div>
@@ -498,7 +548,7 @@ function App() {
                 </ul>
               </div>
               <div>
-                <h4 className="text-lg font-bold mb-4">Newsletter</h4>
+                <h4 className="text-lg font-bold mb-4">Newsletters</h4>
                 <p className="text-gray-400 text-sm mb-4">Subscribe to receive special offers and updates.</p>
                 <div className="flex">
                   <input
