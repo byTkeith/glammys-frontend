@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Header } from "./components/ui/Header";
-//import { Card, CardContent } from "./components/ui/cards";
+
 import { Card, CardContent, CardHeader, CardTitle, TestimonialCard } from "./components/ui/cards";
-import { Button, LuxuryButton, AnimatedButton, IconButton } from "./components/ui/Button";
+import { Button, LuxuryButton, AnimatedButton, IconButton } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Loader2, Calendar, User, Phone, Mail, Instagram, Facebook, Twitter, MapPin, Star, Check } from "lucide-react";
 //import { Calendar, User, Phone, Mail, Instagram, Facebook, Twitter, MapPin, Star, Check, Linkedin } from "lucide-react";
