@@ -1,4 +1,5 @@
 import React from "react";
+// No import needed for this approach
 
 export const Header = ({ activeSection, setActiveSection }) => {
   return (
@@ -6,9 +7,9 @@ export const Header = ({ activeSection, setActiveSection }) => {
       {/* Logo on the left */}
       <div className="flex items-center gap-3">
         <img
-          src="/images/logo.png" // Path to your logo image
+          src="/images/logo.png"
           alt="Glammys Logo"
-          style={{ height: "100px" }} // Logo height set to 100px
+          style={{ height: "100px" }}
         />
         <span className="text-2xl md:text-4xl font-bold text-white tracking-wider">
           GLAMMYS
@@ -19,30 +20,29 @@ export const Header = ({ activeSection, setActiveSection }) => {
       </div>
 
       {/* Navigation buttons on the right */}
-      <div className="flex gap-8">
+      <div className="flex gap-5">
         <button
           onClick={() => setActiveSection("booking")}
-          className={`text-xl font-semibold py-3 px-6 text-white hover:text-[#d4af37] transition-colors ${
-            activeSection === "booking" ? "border-b-2 border-[#d4af37]" : ""
-          }`}
+          className={`relative overflow-hidden bg-gradient-to-r from-[#d4af37] to-amber-600 text-black font-bold py-3 !important px-8 !important text-lg !important rounded-md shadow-md hover:shadow-xl transition-all duration-300`}
         >
-          Book Now
+          <span className="relative z-10">Book Now</span>
+          <span className="absolute inset-0 bg-gradient-to-r from-amber-300/0 via-white/40 to-amber-300/0 opacity-0 hover:opacity-100 transition-opacity duration-1000 transform -translate-x-full hover:translate-x-full"></span>
         </button>
+        
         <button
           onClick={() => setActiveSection("rooms")}
-          className={`text-lg font-semibold py-0 px-0 text-white hover:text-[#d4af37] transition-colors ${
-            activeSection === "rooms" ? "border-b-2 border-[#d4af37]" : ""
-          }`}
+          className={`relative overflow-hidden bg-gradient-to-r from-[#d4af37] to-amber-600 text-black font-bold py-3 px-8 text-lg rounded-md shadow-md hover:shadow-xl transition-all duration-300`}
         >
-          Our Rooms
+          <span className="relative z-10">Our Rooms</span>
+          <span className="absolute inset-0 bg-gradient-to-r from-amber-300/0 via-white/40 to-amber-300/0 opacity-0 hover:opacity-100 transition-opacity duration-1000 transform -translate-x-full hover:translate-x-full"></span>
         </button>
+        
         <button
           onClick={() => setActiveSection("about")}
-          className={`text-lg font-semibold py-0 px-0 text-white hover:text-[#d4af37] transition-colors ${
-            activeSection === "about" ? "border-b-2 border-[#d4af37]" : ""
-          }`}
+          className={`relative overflow-hidden bg-gradient-to-r from-[#d4af37] to-amber-600 text-black font-bold py-3 px-8 text-lg rounded-md shadow-md hover:shadow-xl transition-all duration-300`}
         >
-          About Us
+          <span className="relative z-10">About Us</span>
+          <span className="absolute inset-0 bg-gradient-to-r from-amber-300/0 via-white/40 to-amber-300/0 opacity-0 hover:opacity-100 transition-opacity duration-1000 transform -translate-x-full hover:translate-x-full"></span>
         </button>
       </div>
     </header>

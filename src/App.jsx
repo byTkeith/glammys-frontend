@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { Header } from "./components/ui/Header";
-import { Card, CardContent } from "./components/ui/cards";
-import { Button } from "./components/ui/button";
+//import { Card, CardContent } from "./components/ui/cards";
+import { Card, CardContent, CardHeader, CardTitle, TestimonialCard } from "./components/ui/cards";
+import { Button, LuxuryButton, AnimatedButton, IconButton } from "./components/ui/Button";
 import { Input } from "./components/ui/input";
 import { Loader2, Calendar, User, Phone, Mail, Instagram, Facebook, Twitter, MapPin, Star, Check } from "lucide-react";
+//import { Calendar, User, Phone, Mail, Instagram, Facebook, Twitter, MapPin, Star, Check, Linkedin } from "lucide-react";
+import { TeamMemberCard } from "./components/ui/TeamMemberCard";
 import "./index.css";
 
 function App() {
@@ -24,9 +27,7 @@ function App() {
     "/images/pool-view.jpeg"
   ];
 
-  // State for room slideshows
-  const [roomImageIndices, setRoomImageIndices] = useState({});
-
+  // Define rooms array
   const rooms = [
     {
       id: 1,
@@ -49,7 +50,6 @@ function App() {
       images: [
         "/images/bedroom-2.jpeg",
         "/images/lounge-view.jpeg",
-  
       ]
     },
     {
@@ -66,10 +66,29 @@ function App() {
     }
   ];
 
+  // Initialize room image indices with default values (0 for each room)
+  const [roomImageIndices, setRoomImageIndices] = useState(() => {
+    const indices = {};
+    rooms.forEach(room => {
+      indices[room.name] = 0;
+    });
+    return indices;
+  });
+  
+  // State to track if images are currently transitioning
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Only log when necessary, not on every change
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Room Image Indices:", roomImageIndices);
+    }
+  }, [roomImageIndices]);
+
   const team = [
     {
       name: "Ms S. Nyevedzanał",
-      position: "Director",
+      position: "Founder & Director",
       bio: "With over 15 years in luxury hospitality, Svodai leads Glammys with a vision of unparalleled service excellence.",
       image: "/images/ceo-2.jpeg"
     }
@@ -105,34 +124,42 @@ function App() {
     "Heated Pool"
   ];
 
-  // Hero slideshow effect
+  // Improved Hero slideshow effect with smoother transitions
   useEffect(() => {
+    // Use a longer interval for hero images
     const interval = setInterval(() => {
       setHeroImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-    }, 5000); // Change image every 5 seconds
+    }, 8000); // Change image less frequently (every 8 seconds)
 
     return () => clearInterval(interval);
-  }, []);
+  }, []); // Empty dependency array to ensure this only runs once
 
-  // Room slideshow effect
+  // Modified Room slideshow effect to prevent glitching
   useEffect(() => {
+    // Only set up intervals once, not on every render
     const intervals = {};
-
+    
+    // Use a consistent key for each room (id is better than name)
     rooms.forEach((room) => {
-      intervals[room.name] = setInterval(() => {
-        setRoomImageIndices((prevIndices) => ({
-          ...prevIndices,
-          [room.name]: (prevIndices[room.name] + 1) % room.images.length
-        }));
-      }, 5000); // Change image every 5 seconds
+      if (room.images && room.images.length > 1) { // Only set interval if there are multiple images
+        intervals[room.id] = setInterval(() => {
+          setRoomImageIndices((prevIndices) => {
+            const currentIndex = prevIndices[room.name] || 0;
+            return {
+              ...prevIndices,
+              [room.name]: (currentIndex + 1) % room.images.length
+            };
+          });
+        }, 7000); // Increase to 7 seconds to reduce frequency of changes
+      }
     });
 
     return () => {
-      Object.keys(intervals).forEach((roomName) => {
-        clearInterval(intervals[roomName]);
+      Object.values(intervals).forEach(interval => {
+        clearInterval(interval);
       });
     };
-  }, []);
+  }, []); // Empty dependency array to ensure this only runs once
 
   const handleBooking = async () => {
     if (!room || !date || !customer || !clientPhone) {
@@ -176,6 +203,10 @@ function App() {
                 src={heroImages[heroImageIndex]}
                 alt="Luxury Hotel Ambiance"
                 className="w-full h-full object-cover object-center"
+                onError={(e) => {
+                  console.error(`Failed to load hero image: ${e.target.src}`);
+                  e.target.src = "/images/fallback-image.jpeg"; // Fallback image
+                }}
               />
               <div className="absolute inset-0 flex items-center z-20">
                 <div className="container mx-auto px-6">
@@ -186,15 +217,15 @@ function App() {
                     <p className="text-xl text-gray-200 mb-8 leading-relaxed">
                       Indulge in the epitome of urban elegance at Glammys Executive Suites. Where every moment becomes a cherished memory.
                     </p>
-                    <Button
+                    <LuxuryButton
                       onClick={() => {
                         const bookingForm = document.getElementById('booking-form');
                         bookingForm?.scrollIntoView({ behavior: 'smooth' });
                       }}
-                      className="bg-amber-500 hover:bg-amber-600 text-black font-bold py-3 px-8 rounded-md text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
                     >
                       Book Your Stay
-                    </Button>
+                    </LuxuryButton>
+                   
                   </div>
                 </div>
               </div>
@@ -277,12 +308,15 @@ function App() {
                           className="w-full p-3 border border-gray-700 rounded-lg bg-gray-900 text-white"
                         />
                       </div>
-                      <Button
+                      <LuxuryButton
                         onClick={handleBooking}
-                        className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all"
+                        variant="primary"
+                        isLoading={loading}
+                        className="w-full"
                       >
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : "Confirm Booking"}
-                      </Button>
+                        Confirm Booking
+                      </LuxuryButton>
+                      
                       {message && <p className="text-center text-red-500">{message}</p>}
                     </div>
                   </div>
@@ -294,6 +328,10 @@ function App() {
                       src="/images/city-view.jpeg"
                       alt="Luxury Suite Interior"
                       className="absolute inset-0 h-full w-full object-cover mix-blend-overlay opacity-80"
+                      onError={(e) => {
+                        console.error(`Failed to load image: ${e.target.src}`);
+                        e.target.src = "/images/fallback-image.jpeg";
+                      }}
                     />
                     <div className="relative z-20">
                       <h3 className="text-2xl font-bold mb-4">Why Book Direct?</h3>
@@ -329,82 +367,88 @@ function App() {
             <h2 className="text-3xl font-bold text-center mb-12 text-amber-400">What Our Guests Say</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {testimonials.map((testimonial, index) => (
-                <Card key={index} className="border border-gray-700 shadow-md hover:shadow-xl transition-shadow duration-300 bg-gray-800">
-                  <CardContent className="p-6">
-                    <div className="flex mb-4">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={18}
-                          className={`${i < testimonial.rating ? "text-[#d4af37]" : "text-gray-500"}`}
-                          fill={i < testimonial.rating ? "#d4af37" : "#6b7280"}
-                        />
-                      ))}
-                    </div>
-                    <p className="text-gray-400 mb-6 italic">"{testimonial.comment}"</p>
-                    <div className="flex items-center justify-between">
-                      <p className="font-medium">{testimonial.name}</p>
-                      <div className="flex items-center text-gray-500 text-sm">
-                        <MapPin size={14} className="mr-1" />
-                        {testimonial.location}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <TestimonialCard
+                  key={index}
+                  quote={testimonial.comment}
+                  author={testimonial.name}
+                  location={testimonial.location}
+                  rating={testimonial.rating}
+                  variant="luxury"
+                />
               ))}
             </div>
           </div>
         )}
 
-        {/* Rooms Section */}
+        {/* Rooms Section - Updated with better image handling */}
         {activeSection === "rooms" && (
           <div className={`py-16 container mx-auto px-6 bg-black ${fadeClasses}`}>
             <h2 className="text-4xl font-bold text-center mb-16 text-amber-400">Experience Luxurious Accommodations</h2>
             <div className="grid grid-cols-1 gap-16">
-              {rooms.map((room, index) => (
-                <div
-                  key={room.id}
-                  className={`flex flex-col md:flex-row rounded-2xl overflow-hidden shadow-xl ${fadeClasses}`}
-                  style={{ transitionDelay: `${index * 200}ms` }}
-                >
-                  {/* Room Image */}
-                  <div className={`md:w-1/2 h-64 md:h-auto relative ${index % 2 === 1 ? 'md:order-2' : ''}`}>
-                    <img
-                      src={room.images[roomImageIndices[room.name] || 0]}
-                      alt={room.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-4 right-4 bg-[#d4af37] text-black font-bold py-2 px-4 rounded-md shadow-lg">
-                      {room.price}
+              {rooms.map((room, index) => {
+                // Make sure room has images and get the current image index
+                const hasImages = room.images && room.images.length > 0;
+                const currentImageIndex = roomImageIndices[room.name] || 0;
+                const currentImage = hasImages ? room.images[currentImageIndex] : "/images/fallback-image.jpeg";
+                
+                // Only log in development mode and limit frequency
+                if (process.env.NODE_ENV === 'development' && Math.random() < 0.1) {
+                  console.log(`Room: ${room.name}, Current Image Index: ${currentImageIndex}, Current Image: ${currentImage}`);
+                }
+                
+                return (
+                  <div
+                    key={room.id}
+                    className={`flex flex-col md:flex-row rounded-2xl overflow-hidden shadow-xl ${fadeClasses}`}
+                    style={{ transitionDelay: `${index * 200}ms` }}
+                  >
+                    {/* Room Image with improved rendering to prevent glitching */}
+                    <div className={`md:w-1/2 h-64 md:h-auto relative ${index % 2 === 1 ? 'md:order-2' : ''}`}>
+                      <div className="h-full w-full relative overflow-hidden">
+                        <img
+                          key={`${room.name}-${currentImageIndex}`} // Add key to force proper re-rendering
+                          src={currentImage}
+                          alt={`${room.name} - Image ${currentImageIndex + 1}`}
+                          className="w-full h-full object-cover transition-opacity duration-1000"
+                          style={{ opacity: 1 }} // Ensure consistent opacity
+                          onError={(e) => {
+                            console.error(`Failed to load room image: ${e.target.src}`);
+                            e.target.src = "/images/fallback-image.jpeg"; // Fallback image
+                          }}
+                        />
+                      </div>
+                      <div className="absolute top-4 right-4 bg-[#d4af37] text-black font-bold py-2 px-4 rounded-md shadow-lg">
+                        {room.price}
+                      </div>
+                    </div>
+                    {/* Room Details */}
+                    <div className={`md:w-1/2 p-8 bg-gray-800 flex flex-col justify-center ${index % 2 === 1 ? 'md:order-1' : ''}`}>
+                      <h3 className="text-3xl font-bold mb-4 text-[#d4af37]">{room.name}</h3>
+                      <p className="text-gray-400 mb-6 text-lg">{room.description}</p>
+                      <div className="grid grid-cols-2 gap-3 mb-8">
+                        {room.features.map((feature, i) => (
+                          <div key={i} className="flex items-center text-gray-400">
+                            <Check size={18} className="mr-2 text-[#d4af37]" /> {feature}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <LuxuryButton
+                        onClick={() => {
+                          setRoom(room.name);
+                          setActiveSection("booking");
+                          setTimeout(() => {
+                            const bookingForm = document.getElementById('booking-form');
+                            bookingForm?.scrollIntoView({ behavior: 'smooth' });
+                          }, 100);
+                        }}
+                      >
+                        Book Now
+                      </LuxuryButton>
                     </div>
                   </div>
-                  {/* Room Details */}
-                  <div className={`md:w-1/2 p-8 bg-gray-800 flex flex-col justify-center ${index % 2 === 1 ? 'md:order-1' : ''}`}>
-                    <h3 className="text-3xl font-bold mb-4 text-[#d4af37]">{room.name}</h3>
-                    <p className="text-gray-400 mb-6 text-lg">{room.description}</p>
-                    <div className="grid grid-cols-2 gap-3 mb-8">
-                      {room.features.map((feature, i) => (
-                        <div key={i} className="flex items-center text-gray-400">
-                          <Check size={18} className="mr-2 text-[#d4af37]" /> {feature}
-                        </div>
-                      ))}
-                    </div>
-                    <Button
-                      onClick={() => {
-                        setRoom(room.name);
-                        setActiveSection("booking");
-                        setTimeout(() => {
-                          const bookingForm = document.getElementById('booking-form');
-                          bookingForm?.scrollIntoView({ behavior: 'smooth' });
-                        }, 100);
-                      }}
-                      className="mt-4 self-start bg-[#d4af37] hover:bg-[#c0a035] text-black font-bold py-3 px-6 rounded-md transition-all shadow-md hover:shadow-lg"
-                    >
-                      Book Now
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -420,6 +464,10 @@ function App() {
                   src="/images/background.jpeg"
                   alt="Glammys Exterior"
                   className="rounded-lg shadow-xl w-full"
+                  onError={(e) => {
+                    console.error(`Failed to load image: ${e.target.src}`);
+                    e.target.src = "/images/fallback-image.jpeg";
+                  }}
                 />
               </div>
               <div className="md:w-1/2">
@@ -437,7 +485,20 @@ function App() {
             </div>
 
             {/* Leadership Team */}
-            <h3 className="text-3xl font-bold text-center mb-12 text-amber-400">Meet Our Leadership Team</h3>
+            {/* Leadership Team */}
+<h3 className="text-3xl font-bold text-center mb-12 text-amber-400">Meet Our Leadership Team</h3>
+<div className="max-w-md mx-auto"> {/* Single card centered */}
+  {team.map((member, index) => (
+    <TeamMemberCard
+      key={index}
+      member={member}
+      className={`transform transition-all duration-700 hover:scale-105 ${fadeClasses}`}
+      style={{ transitionDelay: `${index * 200}ms` }}
+    />
+  ))}
+</div>
+           
+            {/* <h3 className="text-3xl font-bold text-center mb-12 text-amber-400">Meet Our Leadership Team</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {team.map((member, index) => (
                 <div
@@ -452,6 +513,10 @@ function App() {
                           src={member.image}
                           alt={member.name}
                           style={{ width: '300px', height: '400px', objectFit: 'cover' }}
+                          onError={(e) => {
+                            console.error(`Failed to load team image: ${e.target.src}`);
+                            e.target.src = "/images/fallback-image.jpeg";
+                          }}
                         />
                       </div>
                       <div className="p-6 flex-grow bg-gray-800">
@@ -463,7 +528,7 @@ function App() {
                   </Card>
                 </div>
               ))}
-            </div>
+            </div> */}
 
             {/* Contact Section */}
             <div className="bg-gray-900 rounded-2xl p-12 max-w-4xl mx-auto mt-16">
@@ -475,7 +540,7 @@ function App() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Call Us</p>
-                    <p className="font-medium">+1 (555) 123-4567</p>
+                    <p className="font-medium">+27 (789) 727-4452</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -484,7 +549,7 @@ function App() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Email Us</p>
-                    <p className="font-medium">info@glammyssuites.com</p>
+                    <p className="font-medium">sandton.exclusive@gmail.com</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -498,15 +563,9 @@ function App() {
                 </div>
               </div>
               <div className="flex justify-center gap-6 mt-8">
-                <a href="#" className="bg-amber-500 p-3 rounded-full hover:bg-amber-600 transition-colors">
-                  <Instagram size={24} className="text-black hover:text-white transition-colors" />
-                </a>
-                <a href="#" className="bg-amber-500 p-3 rounded-full hover:bg-amber-600 transition-colors">
-                  <Facebook size={24} className="text-black hover:text-white transition-colors" />
-                </a>
-                <a href="#" className="bg-amber-500 p-3 rounded-full hover:bg-amber-600 transition-colors">
-                  <Twitter size={24} className="text-black hover:text-white transition-colors" />
-                </a>
+                <IconButton icon={<Instagram size={24} />} onClick={() => window.open('#', '_blank')} />
+                <IconButton icon={<Facebook size={24} />} onClick={() => window.open('#', '_blank')} />
+                <IconButton icon={<Twitter size={24} />} onClick={() => window.open('#', '_blank')} />
               </div>
             </div>
           </div>
